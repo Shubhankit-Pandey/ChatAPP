@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class groupPage extends StatefulWidget {
   final String name;
@@ -9,9 +10,23 @@ class groupPage extends StatefulWidget {
 }
 
 class _groupPageState extends State<groupPage> {
+  IO.Socket? socket;
+
+  void connect() {
+    socket = IO.io("http://localhost:3000", <String, dynamic>{
+      "transports": ["websocket"],
+      "autoConnect": false,
+    });
+    socket!.connect();
+    socket!.onConnect((_) {
+      print("Connected to frontend");
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    connect();
   }
 
   @override

@@ -17,7 +17,7 @@ class _splashScreenState extends State<splashScreen> {
   }
 
   _navigatetohome() async {
-    await Future.delayed(Duration(milliseconds: 2000), () => {});
+    await Future.delayed(const Duration(milliseconds: 2000), () => {});
     Navigator.pushAndRemoveUntil(context,
         MaterialPageRoute(builder: (context) => signIn()), (route) => true);
   }
@@ -28,6 +28,7 @@ class _splashScreenState extends State<splashScreen> {
       body: Center(
         child: Container(
           child: Text("Splash Screen"),
+          color: Colors.amber,
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './pages/splash.dart';
+import './pages/chatpage.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,9 +12,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: splashScreen(),
+      home: chatPage(),
     );
   }
 }

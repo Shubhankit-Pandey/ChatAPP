@@ -1,5 +1,6 @@
 import 'package:chatapp/pages/signin.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import './group.dart';
 
 class chatPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class chatPage extends StatefulWidget {
 class _chatPageState extends State<chatPage> {
   TextEditingController nameController = new TextEditingController();
   final formKey = GlobalKey<FormState>();
+  var uuid = Uuid();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,10 @@ class _chatPageState extends State<chatPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => groupPage(name),
+                            builder: (context) => groupPage(
+                              uuid.v1(),
+                              name,
+                            ),
                           ),
                         ),
                       }

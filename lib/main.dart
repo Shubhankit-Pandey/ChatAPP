@@ -1,3 +1,5 @@
+import 'package:chatapp/pages/signin.dart';
+import 'package:chatapp/pages/signup.dart';
 import 'package:flutter/material.dart';
 
 import './pages/splash.dart';
@@ -14,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: chatPage(),
+      home: MyWidget(),
     );
   }
 }

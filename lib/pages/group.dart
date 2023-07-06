@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../models/msgModel.dart';
 
 class groupPage extends StatefulWidget {
   final String name;
-  const groupPage(this.name, {super.key});
+  final String uid;
+  const groupPage(this.uid, this.name, {super.key});
 
   @override
   State<groupPage> createState() => _groupPageState();
 }
 
 class _groupPageState extends State<groupPage> {
+  List<MsgModel> listMsg = [];
+  TextEditingController _msgcontroller = new TextEditingController();
   IO.Socket? socket;
 
   void connect() {
@@ -20,7 +24,41 @@ class _groupPageState extends State<groupPage> {
     socket!.connect();
     socket!.onConnect((_) {
       print("Connected to frontend");
+      socket!.on(
+        "sendMsgserver",
+        (msg) {
+          print(msg);
+          if (msg["userId"] != widget.uid) {
+            setState(() {
+              listMsg.add(
+                MsgModel(
+                  msg: msg["msg"],
+                  type: msg["type"],
+                  sender: msg["sender"],
+                ),
+              );
+            });
+          }
+        },
+      );
     });
+  }
+
+  void sendMessage(String msg, String sender) {
+    MsgModel ownmsg = MsgModel(msg: msg, type: "ownMsg", sender: sender);
+    listMsg.add(ownmsg);
+    setState(() {
+      listMsg;
+    });
+    socket!.emit(
+      'sendMsg',
+      {
+        "type": "ownMsg",
+        "msg": msg,
+        "sender": sender,
+        "userId": widget.uid,
+      },
+    );
   }
 
   @override
@@ -38,7 +76,23 @@ class _groupPageState extends State<groupPage> {
       body: Column(
         children: [
           Expanded(
-            child: Container(),
+            // child: ListView(
+            //   children: [
+            //     OwnMessage("hello there", "shubh"),
+            //     OtherMessage("message", "sender"),
+            //   ],
+            // ),
+            child: ListView.builder(
+                itemCount: listMsg.length,
+                itemBuilder: (contex, index) {
+                  if (listMsg[index].type == "ownMsg") {
+                    return OwnMessage(
+                        listMsg[index].msg, listMsg[index].sender);
+                  } else {
+                    return OtherMessage(
+                        listMsg[index].msg, listMsg[index].sender);
+                  }
+                }),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -46,6 +100,7 @@ class _groupPageState extends State<groupPage> {
               children: [
                 Expanded(
                   child: TextFormField(
+                    controller: _msgcontroller,
                     decoration: const InputDecoration(
                       hintText: "Type here....",
                       border: OutlineInputBorder(
@@ -57,7 +112,13 @@ class _groupPageState extends State<groupPage> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                    if (_msgcontroller.text.isNotEmpty)
+                      {
+                        sendMessage(_msgcontroller.text, widget.name),
+                        _msgcontroller.clear(),
+                      }
+                  },
                   icon: const Icon(
                     Icons.send,
                     color: Colors.blue,
@@ -67,6 +128,102 @@ class _groupPageState extends State<groupPage> {
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+class OwnMessage extends StatelessWidget {
+  final String message;
+  final String sender;
+  const OwnMessage(this.message, this.sender, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.6,
+        ),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          color: Colors.teal,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  sender,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.amber),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  message,
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class OtherMessage extends StatelessWidget {
+  final String message;
+  final String sender;
+  const OtherMessage(this.message, this.sender, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.6,
+        ),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          color: Colors.purple,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  sender,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.amber),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  message,
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

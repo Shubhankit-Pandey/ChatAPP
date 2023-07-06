@@ -24,13 +24,27 @@ class _SignUpState extends State<SignUp> {
         "email": emailController.text,
         "password": passwordController.text
       };
-      print("ssdsd");
 
       var response = await http.post(
         Uri.parse(registration),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(regBody),
       );
+
+      var jsonRes = jsonDecode(response.body);
+
+      print(jsonRes['status']);
+
+      if (jsonRes['status']) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => signIn(),
+          ),
+        );
+      } else {
+        print("something went wrong !!");
+      }
     } else {
       setState(() {
         _isNotValidate = true;

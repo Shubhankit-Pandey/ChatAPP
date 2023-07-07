@@ -10,17 +10,17 @@ class splashScreen extends StatefulWidget {
 }
 
 class _splashScreenState extends State<splashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _navigatetohome();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _navigatetohome();
+  // }
 
-  _navigatetohome() async {
-    await Future.delayed(const Duration(milliseconds: 2000), () => {});
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => signIn()), (route) => true);
-  }
+  // _navigatetohome() async {
+  //   await Future.delayed(const Duration(milliseconds: 2000), () => {});
+  //   Navigator.pushAndRemoveUntil(context,
+  //       MaterialPageRoute(builder: (context) => SignInPage()), (route) => true);
+  // }
 
   @override
   Widget build(BuildContext context) {

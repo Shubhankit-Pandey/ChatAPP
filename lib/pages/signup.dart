@@ -39,7 +39,7 @@ class _SignUpState extends State<SignUp> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => signIn(),
+            builder: (context) => SignInPage(),
           ),
         );
       } else {

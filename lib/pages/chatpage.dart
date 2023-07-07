@@ -1,10 +1,12 @@
 import 'package:chatapp/pages/signin.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import './group.dart';
 
 class chatPage extends StatefulWidget {
-  const chatPage({super.key});
+  final token;
+  const chatPage({@required this.token, super.key});
 
   @override
   State<chatPage> createState() => _chatPageState();
@@ -14,6 +16,14 @@ class _chatPageState extends State<chatPage> {
   TextEditingController nameController = new TextEditingController();
   final formKey = GlobalKey<FormState>();
   var uuid = Uuid();
+  late String email;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
+    email = jwtDecodedToken['email'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +56,7 @@ class _chatPageState extends State<chatPage> {
                     print(nameController.text),
                     if (formKey.currentState!.validate())
                       {
-                        name = nameController.text,
+                        name = email,
                         nameController.clear(),
                         Navigator.pop(context),
                         Navigator.push(

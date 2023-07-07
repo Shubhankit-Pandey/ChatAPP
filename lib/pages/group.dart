@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../models/msgModel.dart';
+import 'package:http/http.dart' as http;
+import './config.dart';
 
 class groupPage extends StatefulWidget {
   final String name;
   final String uid;
-  const groupPage(this.uid, this.name, {super.key});
+  final String userId;
+  const groupPage(this.uid, this.name, this.userId, {super.key});
 
   @override
   State<groupPage> createState() => _groupPageState();
@@ -15,6 +20,25 @@ class _groupPageState extends State<groupPage> {
   List<MsgModel> listMsg = [];
   TextEditingController _msgcontroller = new TextEditingController();
   IO.Socket? socket;
+
+  void addmessage() async {
+    if (_msgcontroller.text.isNotEmpty) {
+      var regBody = {"userId": widget.userId, "desc": _msgcontroller.text};
+      var response = await http.post(Uri.parse(messagelink),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(regBody));
+      var jsonResponse = jsonDecode(response.body);
+      print(jsonResponse['status']);
+      // if(jsonResponse['status']){
+      //   ms.clear();
+      //   _todoTitle.clear();
+      //   Navigator.pop(context);
+      //   getTodoList(userId);
+      // }else{
+      //   print("SomeThing Went Wrong");
+      // }
+    }
+  }
 
   void connect() {
     socket = IO.io("http://localhost:3000", <String, dynamic>{
@@ -116,6 +140,7 @@ class _groupPageState extends State<groupPage> {
                     if (_msgcontroller.text.isNotEmpty)
                       {
                         sendMessage(_msgcontroller.text, widget.name),
+                        addmessage(),
                         _msgcontroller.clear(),
                       }
                   },

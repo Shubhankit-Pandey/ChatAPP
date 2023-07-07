@@ -9,11 +9,8 @@ import './pages/chatpage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
   runApp(
-    MyApp(
-      token: prefs.getString('token'),
-    ),
+    MyApp(),
   );
 }
 
@@ -25,9 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: (JwtDecoder.isExpired(token) == false)
-          ? SignInPage()
-          : chatPage(token: token),
+      home: SignUp(),
     );
   }
 }

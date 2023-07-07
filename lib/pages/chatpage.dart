@@ -17,12 +17,14 @@ class _chatPageState extends State<chatPage> {
   final formKey = GlobalKey<FormState>();
   var uuid = Uuid();
   late String email;
+  late String userId;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
     email = jwtDecodedToken['email'];
+    userId = jwtDecodedToken['_id'];
   }
 
   @override
@@ -65,6 +67,7 @@ class _chatPageState extends State<chatPage> {
                             builder: (context) => groupPage(
                               uuid.v1(),
                               name,
+                              userId
                             ),
                           ),
                         ),
